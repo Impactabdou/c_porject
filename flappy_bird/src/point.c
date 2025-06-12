@@ -1,7 +1,7 @@
 #include "../include/point.h"
 #include <stdio.h>
 
-point create_point(int x, int y) {
+point create_point(unsigned int x, unsigned int y) {
   point p = {x, y};
   return p;
 }

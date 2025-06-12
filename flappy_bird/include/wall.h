@@ -18,4 +18,9 @@ void *free_wall(wall *w);
 
 void print_wall(wall w);
 
+wall **generate_walls(unsigned int num_walls, unsigned int height,
+                      unsigned int width);
+
+void *free_walls(wall **w, unsigned int num_walls);
+
 #endif // !H_WALL

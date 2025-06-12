@@ -1,23 +1,28 @@
 #include "../include/map.h"
-#include <stdlib.h>
+#include <stdio.h>
+
 int main(int argv, char **argc) {
 
-  point top_l = {0, 0};
-  point top_r = {3, 0};
-  point bottom_l = {0, 3};
-  point bottom_r = {3, 3};
+  unsigned int height = 30;
+  unsigned int width = 100;
+  unsigned int num_walls = 4;
 
-  wall *w = create_wall(top_l, top_r, bottom_l, bottom_r);
+  wall **walls = generate_walls(num_walls, height, width);
 
-  wall **walls = malloc(sizeof(wall *) * 1);
+  if (walls == NULL) {
+    printf("Critical : No walls\n");
+    return -1;
+  }
 
-  walls[0] = w;
-
-  map *m = create_map(30, 20, walls, 1);
+  map *m = create_map(width, height, walls, num_walls);
 
   draw_walls(m);
 
   print_map(*m);
+
+  free_map(m);
+
+  // walls = free_walls(walls, num_walls); seg fault here
 
   return 0;
 }
