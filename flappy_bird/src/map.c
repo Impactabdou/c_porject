@@ -1,6 +1,7 @@
 #include "../include/map.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 map *create_map(unsigned int width, unsigned int height, wall **walls,
                 unsigned int num_walls) {
@@ -19,6 +20,11 @@ map *create_map(unsigned int width, unsigned int height, wall **walls,
     }
   }
   return m;
+}
+
+void refrech_frame(map *m, wall **walls) {
+  m->walls = walls;
+  draw_walls(m);
 }
 
 int in_range(unsigned int x, unsigned int y, map m) {
@@ -54,7 +60,14 @@ void *free_map(map *m) {
 }
 
 void print_map(map m) {
-  printf("#############################\n");
+  char *border_str = (char *)malloc(sizeof(char) * m.width + 1);
+
+  for (unsigned int row = 0; row < m.width; row++) {
+    border_str[row] = '#';
+  }
+  border_str[m.width] = '\0';
+  printf("%s\n", border_str);
+
   for (unsigned int i = 0; i < m.height; i++) {
     printf("#");
     for (unsigned int j = 0; j < m.width; j++) {
@@ -62,5 +75,5 @@ void print_map(map m) {
     }
     printf("#\n");
   }
-  printf("#############################\n");
+  printf("%s\n", border_str);
 }

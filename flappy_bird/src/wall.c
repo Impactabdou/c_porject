@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// all cords are used to deterline the wall seperation
 wall *create_wall(point top_left, point top_right, point bottom_left,
                   point bottom_right) {
   wall *w = malloc(sizeof(wall));
@@ -12,6 +13,7 @@ wall *create_wall(point top_left, point top_right, point bottom_left,
   return w;
 }
 
+// for testing might get deleted
 wall **generate_walls(unsigned int num_walls, unsigned int height,
                       unsigned int width) {
 
