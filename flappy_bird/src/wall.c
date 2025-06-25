@@ -10,7 +10,12 @@ wall *create_wall(unsigned int height, unsigned int width, point top_left) {
   return w;
 }
 
-void movs_left(wall *w, int steps) { w->top_left.x -= steps; }
+void move_left(wall *w, int steps) {
+  if (w->top_left.x == 0) {
+    return;
+  }
+  w->top_left.x -= steps;
+}
 
 point *get_wall_cords(wall w) {
   point *cords = malloc(sizeof(point) * 4);

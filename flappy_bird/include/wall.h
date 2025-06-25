@@ -32,6 +32,8 @@ void print_wall(wall w);
 wall **generate_walls(unsigned int num_walls, unsigned int height,
                       unsigned int width);
 
+void move_left(wall *w, int num_steps);
+
 point *get_wall_cords(wall w);
 
 void *free_walls(wall **w, unsigned int num_walls);

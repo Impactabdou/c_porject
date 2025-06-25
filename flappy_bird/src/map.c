@@ -43,6 +43,7 @@ void draw_walls(map *m) {
     unsigned int col_end = curr_wall_cords[TOP_R].x;
     unsigned int row_empty_start = curr_wall_cords[TOP_L].y;
     unsigned int row_empty_end = curr_wall_cords[BOTTOM_L].y;
+    free(curr_wall_cords);
     for (unsigned int row = 0; row < m->height; row++) {
       if (row >= row_empty_start && row < row_empty_end) {
         continue;

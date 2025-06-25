@@ -20,7 +20,7 @@ game *create_game_manager(map *m, unsigned int left_limitation, int mode);
 
 game *free_game(game *gm);
 
-game *move_walls(game *gm);
+void move_walls(game *gm);
 
 unsigned char get_gap_legnth(game gm);
 

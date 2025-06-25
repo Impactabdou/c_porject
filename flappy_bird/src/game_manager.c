@@ -58,7 +58,12 @@ void add_wall_in_game(game *gm) {
   }
   gm->left_limitation = w->top_left.x + STAND_WIDTH + WALL_OFFSET;
   printf("\nWall has been added succesfully\n");
-  draw_walls(gm->m);
+}
+
+void move_walls(game *gm) {
+  for (unsigned int i = 0; i < gm->m->curr_num_walls; i++) {
+    move_left(gm->m->walls[i], 1);
+  }
 }
 
 unsigned char get_gap_legnth(game gm) {
@@ -70,8 +75,6 @@ unsigned char get_gap_legnth(game gm) {
   }
   return EASY_MODE_GAP;
 }
-
-void start_game(game *g) {}
 
 game *free_game(game *gm) {
   gm->m = free_map(gm->m);
