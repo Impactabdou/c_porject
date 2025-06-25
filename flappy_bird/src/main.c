@@ -1,28 +1,29 @@
-#include "../include/map.h"
-#include <stdio.h>
+#include "../include/game_manager.h"
+#include <stdlib.h>
+#include <time.h>
 
-int main(int argv, char **argc) {
+int main() {
 
-  unsigned int height = 30;
-  unsigned int width = 100;
-  unsigned int num_walls = 4;
+  srand((unsigned)time(NULL));
 
-  wall **walls = generate_walls(num_walls, height, width);
+  unsigned int map_width = 100;
+  unsigned int map_height = 40;
+  unsigned int max_num_walls = 4;
+  unsigned int left_limitation = 10;
 
-  if (walls == NULL) {
-    printf("Critical : No walls\n");
-    return -1;
-  }
+  point init_pos_bird = {5, map_height / 2};
 
-  map *m = create_map(width, height, walls, num_walls);
+  bird *b = create_bird(init_pos_bird);
 
-  draw_walls(m);
+  map *m = create_map(map_width, map_height, b, max_num_walls);
+
+  game *gm = create_game_manager(m, left_limitation, EASY_MODE);
 
   print_map(*m);
 
-  free_map(m);
+  add_walls_in_game(gm, 3);
 
-  // walls = free_walls(walls, num_walls); seg fault here
+  print_map(*m);
 
   return 0;
 }

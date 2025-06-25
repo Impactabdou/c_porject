@@ -3,13 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-map *create_map(unsigned int width, unsigned int height, wall **walls,
-                unsigned int num_walls) {
+map *create_map(unsigned int width, unsigned int height, bird *b,
+                unsigned int max_num_walls) {
   map *m = malloc(sizeof(map));
-  m->walls = walls;
+  m->b = b;
+  m->walls = (wall **)malloc(sizeof(wall *) * max_num_walls);
   m->width = width;
   m->height = height;
-  m->num_walls = num_walls;
+  m->max_num_walls = max_num_walls;
   m->frames = malloc(sizeof(char *) * height);
   for (unsigned int row = 0; row < height; row++) {
     m->frames[row] = malloc(sizeof(char) * width);
@@ -22,9 +23,12 @@ map *create_map(unsigned int width, unsigned int height, wall **walls,
   return m;
 }
 
-void refrech_frame(map *m, wall **walls) {
-  m->walls = walls;
-  draw_walls(m);
+int add_wall_in_map(map *m, wall *w) {
+  if (m->curr_num_walls >= m->max_num_walls) {
+    return 0;
+  }
+  m->walls[m->curr_num_walls++] = w;
+  return 1;
 }
 
 int in_range(unsigned int x, unsigned int y, map m) {
@@ -32,20 +36,31 @@ int in_range(unsigned int x, unsigned int y, map m) {
 }
 
 void draw_walls(map *m) {
-  for (unsigned int i = 0; i < m->num_walls; i++) {
-    for (unsigned int row = m->walls[i]->top_left.y;
-         row < m->walls[i]->bottom_right.y; row++) {
-      for (unsigned int col = m->walls[i]->top_left.x;
-           col < m->walls[i]->top_right.x; col++) {
-        if (in_range(col, row, *m))
-          m->frames[row][col] = WALL_FRAME;
+  for (unsigned int curr_wall = 0; curr_wall < m->curr_num_walls; curr_wall++) {
+
+    point *curr_wall_cords = get_wall_cords(*m->walls[curr_wall]);
+    unsigned int col_start = curr_wall_cords[TOP_L].x;
+    unsigned int col_end = curr_wall_cords[TOP_R].x;
+    unsigned int row_empty_start = curr_wall_cords[TOP_L].y;
+    unsigned int row_empty_end = curr_wall_cords[BOTTOM_L].y;
+    for (unsigned int row = 0; row < m->height; row++) {
+      if (row >= row_empty_start && row < row_empty_end) {
+        continue;
+      }
+      for (unsigned int col = col_start; col < col_end; col++) {
+        if (!in_range(col, row, *m)) {
+          printf(" row %d col %d\n", row, col);
+          continue;
+        }
+        m->frames[row][col] = WALL_FRAME;
       }
     }
   }
 }
 
 void *free_map(map *m) {
-  for (unsigned int i = 0; i < m->num_walls; i++) {
+  m->b = free_bird(m->b);
+  for (unsigned int i = 0; i < m->curr_num_walls; i++) {
     m->walls[i] = free_wall(m->walls[i]);
   }
   for (unsigned int row = 0; row < m->height; row++) {

@@ -11,9 +11,21 @@
 #include "./map.h"
 
 typedef struct game_struct {
-  map m;
-  wall *walls;
-  bird b;
+  map *m;
+  unsigned char game_mode;
+  unsigned int left_limitation;
 } game;
+
+game *create_game_manager(map *m, unsigned int left_limitation, int mode);
+
+game *free_game(game *gm);
+
+game *move_walls(game *gm);
+
+unsigned char get_gap_legnth(game gm);
+
+void add_wall_in_game(game *gm);
+
+void add_walls_in_game(game *gm, int num_walls);
 
 #endif
