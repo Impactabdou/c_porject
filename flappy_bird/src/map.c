@@ -1,7 +1,7 @@
 #include "../include/map.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <unistd.h>
 
 map *create_map(unsigned int width, unsigned int height, bird *b,
                 unsigned int max_num_walls) {
@@ -35,7 +35,25 @@ int in_range(unsigned int x, unsigned int y, map m) {
   return x < m.width && y < m.height;
 }
 
-void draw_walls(map *m) {
+void update_frames(map *m) {
+  draw_walls(m, 0);
+  draw_bird(m, 0);
+}
+
+void draw_bird(map *m, int reset) {
+  bird *b = m->b;
+  if (!in_range(b->pos.x, b->pos.y, *m)) {
+    printf("Bird OUT OF RANGE\n");
+    return;
+  }
+  if (reset) {
+    m->frames[b->pos.y][b->pos.x] = EMPTY_FRAME;
+  } else {
+    m->frames[b->pos.y][b->pos.x] = BIRD_FRAME;
+  }
+}
+
+void draw_walls(map *m, int reset) {
   for (unsigned int curr_wall = 0; curr_wall < m->curr_num_walls; curr_wall++) {
 
     point *curr_wall_cords = get_wall_cords(*m->walls[curr_wall]);
@@ -53,7 +71,12 @@ void draw_walls(map *m) {
           printf(" row %d col %d\n", row, col);
           continue;
         }
-        m->frames[row][col] = WALL_FRAME;
+        if (reset) {
+          m->frames[row][col] = EMPTY_FRAME;
+        } else {
+
+          m->frames[row][col] = WALL_FRAME;
+        }
       }
     }
   }
@@ -76,6 +99,8 @@ void *free_map(map *m) {
 }
 
 void print_map(map m) {
+  usleep(50000);
+  system("clear");
   char *border_str = (char *)malloc(sizeof(char) * m.width + 1);
 
   for (unsigned int row = 0; row < m.width; row++) {

@@ -20,7 +20,9 @@ game *create_game_manager(map *m, unsigned int left_limitation, int mode);
 
 game *free_game(game *gm);
 
-void move_walls(game *gm);
+void move_walls(game *gm, unsigned int steps);
+
+void move_bird_in_game(game *gm, int speed, int move_activated);
 
 unsigned char get_gap_legnth(game gm);
 

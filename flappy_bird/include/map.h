@@ -17,7 +17,9 @@ map *create_map(unsigned int width, unsigned int height, bird *b,
                 unsigned int max_num_walls);
 void print_map(map m);
 void *free_map(map *m);
-void draw_walls(map *m);
+void draw_walls(map *m, int reset);
+void draw_bird(map *m, int reset);
+void update_frames(map *m);
 void refrech(map *m, wall **walls);
 int add_wall_in_map(map *m, wall *w);
 
