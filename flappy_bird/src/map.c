@@ -68,7 +68,6 @@ void draw_walls(map *m, int reset) {
       }
       for (unsigned int col = col_start; col < col_end; col++) {
         if (!in_range(col, row, *m)) {
-          printf(" row %d col %d\n", row, col);
           continue;
         }
         if (reset) {

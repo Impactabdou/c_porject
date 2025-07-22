@@ -22,5 +22,6 @@ void draw_bird(map *m, int reset);
 void update_frames(map *m);
 void refrech(map *m, wall **walls);
 int add_wall_in_map(map *m, wall *w);
+int in_range(unsigned int x, unsigned int y, map m);
 
 #endif // !H_MAP

@@ -16,6 +16,8 @@ SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 BIN = $(BIN_DIR)/my_program
 
+COM = blank
+
 # Default target
 all: $(BIN)
 
@@ -36,6 +38,13 @@ clean:
 # Doxygen documentation
 docs:
 	$(DOXYGEN) Doxyfile
+
+push:
+	git push
+
+commit:
+	git add .
+	git commit -m "$(COM)" 
 
 # Phony targets
 .PHONY: all clean docs

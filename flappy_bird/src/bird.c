@@ -10,7 +10,6 @@ bird *create_bird(point init_pos) {
 }
 
 void move_bird(bird *b, int direction, int speed) {
-  b->pos.x++;
   switch (direction) {
   case DOWN:
     b->pos.y += speed;

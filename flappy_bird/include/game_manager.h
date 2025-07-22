@@ -22,7 +22,7 @@ game *free_game(game *gm);
 
 void move_walls(game *gm, unsigned int steps);
 
-void move_bird_in_game(game *gm, int speed, int move_activated);
+int move_bird_in_game(game *gm, int speed, int move_activated);
 
 unsigned char get_gap_legnth(game gm);
 
@@ -30,4 +30,5 @@ void add_wall_in_game(game *gm);
 
 void add_walls_in_game(game *gm, int num_walls);
 
+int colided(game *gm, point pos);
 #endif

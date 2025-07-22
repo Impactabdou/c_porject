@@ -69,31 +69,38 @@ void move_walls(game *gm, unsigned int steps) {
 }
 
 /**
- * @brief burds moves x ups and x downs simulating a hop like move
+ * @brief bird moves x ups and x downs simulating a hop like move
  * @caution frame needs to bo updated throught out these moves WALLS MOVE ALONG
  */
-void move_bird_in_game(game *gm, int speed, int move_activated) {
+int move_bird_in_game(game *gm, int speed, int move_activated) {
   if (move_activated == 1) {
     unsigned int max_steps = 5;
-    unsigned int mid_steps = max_steps / 2;
-    for (unsigned int steps = 0; steps < max_steps; steps++) {
+    unsigned int mid_steps = max_steps / 0.9;
+    for (unsigned int steps = 0; steps <= max_steps; steps++) {
       draw_bird(gm->m, 1);
       if (steps <= mid_steps) {
         move_bird(gm->m->b, UP, speed);
       } else {
         move_bird(gm->m->b, DOWN, speed);
       }
-      move_walls(gm, 3);
+      if (colided(gm, gm->m->b->pos)) {
+        return 0;
+      }
+      move_walls(gm, speed);
       update_frames(gm->m);
       print_map(*gm->m);
     }
   } else {
     draw_bird(gm->m, 1);
     move_bird(gm->m->b, DOWN, speed);
-    move_walls(gm, 3);
+    if (colided(gm, gm->m->b->pos)) {
+      return 0;
+    }
+    move_walls(gm, speed);
     update_frames(gm->m);
     print_map(*gm->m);
   }
+  return 1;
 }
 
 unsigned char get_gap_legnth(game gm) {
@@ -104,6 +111,11 @@ unsigned char get_gap_legnth(game gm) {
     return MED_MODE_GAP;
   }
   return EASY_MODE_GAP;
+}
+
+int colided(game *gm, point pos) {
+  return !in_range(pos.x, pos.y, *gm->m) ||
+         gm->m->frames[pos.y][pos.x] == WALL_FRAME;
 }
 
 game *free_game(game *gm) {
