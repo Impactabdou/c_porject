@@ -17,6 +17,10 @@ void move_left(wall *w, int steps) {
   w->top_left.x -= steps;
 }
 
+int out_of_bound_wall(wall w) { return w.top_left.x == 0; }
+
+void reset_wall(wall *w, int width) { w->top_left.x = width; }
+
 point *get_wall_cords(wall w) {
   point *cords = malloc(sizeof(point) * 4);
   cords[TOP_L] = w.top_left;

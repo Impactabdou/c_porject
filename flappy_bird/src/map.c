@@ -98,7 +98,7 @@ void *free_map(map *m) {
 }
 
 void print_map(map m) {
-  usleep(50000);
+  usleep(30000);
   system("clear");
   char *border_str = (char *)malloc(sizeof(char) * m.width + 1);
 

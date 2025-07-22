@@ -41,6 +41,16 @@ void add_walls_in_game(game *gm, int num_walls) {
   }
 }
 
+void respawn_walls_in_game(game *gm) {
+  for (unsigned int wall_id = 0; wall_id < gm->m->curr_num_walls; wall_id++) {
+    wall *curr_w = gm->m->walls[wall_id];
+    if (out_of_bound_wall(*curr_w)) {
+      draw_walls(gm->m, 1);
+      reset_wall(curr_w, gm->m->width);
+    }
+  }
+}
+
 void add_wall_in_game(game *gm) {
 
   wall *w = generate_wall(gm);
@@ -73,16 +83,12 @@ void move_walls(game *gm, unsigned int steps) {
  * @caution frame needs to bo updated throught out these moves WALLS MOVE ALONG
  */
 int move_bird_in_game(game *gm, int speed, int move_activated) {
+  respawn_walls_in_game(gm);
   if (move_activated == 1) {
-    unsigned int max_steps = 5;
-    unsigned int mid_steps = max_steps / 0.9;
+    unsigned int max_steps = 10;
     for (unsigned int steps = 0; steps <= max_steps; steps++) {
       draw_bird(gm->m, 1);
-      if (steps <= mid_steps) {
-        move_bird(gm->m->b, UP, speed);
-      } else {
-        move_bird(gm->m->b, DOWN, speed);
-      }
+      move_bird(gm->m->b, UP, speed);
       if (colided(gm, gm->m->b->pos)) {
         return 0;
       }

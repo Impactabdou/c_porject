@@ -31,4 +31,6 @@ void add_wall_in_game(game *gm);
 void add_walls_in_game(game *gm, int num_walls);
 
 int colided(game *gm, point pos);
+
+void respawn_walls_in_game(game *gm);
 #endif

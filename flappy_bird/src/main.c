@@ -22,7 +22,7 @@ int main() {
   unsigned int map_height = 40;
   unsigned int max_num_walls = 4;
   unsigned int left_limitation = 50;
-  unsigned int number_of_walls_at_start = 1;
+  unsigned int number_of_walls_at_start = 3;
   unsigned int count = 0;
 
   point init_pos_bird = {5, map_height / 2};
@@ -54,6 +54,7 @@ void *asciRead() {
   enableRAWMode(); // local function: Enable Raw Mode
   char ch;
   while (1) {
+    usleep(10000);
     if (gameEnd) {
       break;
     }
