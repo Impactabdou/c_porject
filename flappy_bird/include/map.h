@@ -15,7 +15,7 @@ typedef struct struct_map {
 } map;
 map *create_map(unsigned int width, unsigned int height, bird *b,
                 unsigned int max_num_walls);
-void print_map(map m);
+void print_map(map m, char *score);
 void *free_map(map *m);
 void draw_walls(map *m, int reset);
 void draw_bird(map *m, int reset);

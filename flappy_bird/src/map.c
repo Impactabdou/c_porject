@@ -97,20 +97,32 @@ void *free_map(map *m) {
   return NULL;
 }
 
-void print_map(map m) {
+void print_map(map m, char *score) {
   usleep(30000);
   system("clear");
-  char *border_str = (char *)malloc(sizeof(char) * m.width + 1);
+  char *border_str = (char *)malloc(sizeof(char) * 1024);
 
-  for (unsigned int row = 0; row < m.width; row++) {
+  for (unsigned int row = 0; row <= m.width + 1; row++) {
     border_str[row] = '#';
   }
-  border_str[m.width] = '\0';
+  border_str[m.width + 2] = '\0';
   printf("%s\n", border_str);
 
   for (unsigned int i = 0; i < m.height; i++) {
     printf("#");
     for (unsigned int j = 0; j < m.width; j++) {
+      if (i < 4 && j > 160) {
+        if (i < 3 && j > 161) {
+          if (i == 1) {
+            printf("%s", score);
+            break;
+          }
+          printf("%c", EMPTY_FRAME);
+        } else {
+          printf("#");
+        }
+        continue;
+      }
       printf("%c", m.frames[i][j]);
     }
     printf("#\n");

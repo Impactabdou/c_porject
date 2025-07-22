@@ -1,12 +1,14 @@
 #include "../include/game_manager.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 game *create_game_manager(map *m, unsigned int left_limitation, int game_mode) {
   game *gm = malloc(sizeof(game));
   gm->m = m;
   gm->left_limitation = left_limitation;
   gm->game_mode = game_mode;
+  gm->score = 0;
   return gm;
 }
 
@@ -35,8 +37,8 @@ wall *generate_wall(game *gm, int ignore_limitation) {
   return create_wall(gap_height, STAND_WIDTH, left_top);
 }
 
-void add_walls_in_game(game *gm, int num_walls) {
-  for (int i = 0; i < num_walls; i++) {
+void add_walls_in_game(game *gm, unsigned int num_walls) {
+  for (unsigned int i = 0; i < num_walls; i++) {
     add_wall_in_game(gm);
   }
 }
@@ -95,8 +97,9 @@ int move_bird_in_game(game *gm, int speed, int move_activated) {
         return 0;
       }
       move_walls(gm, speed);
+      count_score(gm);
       update_frames(gm->m);
-      print_map(*gm->m);
+      print_map(*gm->m, get_score_string(*gm));
     }
   } else {
     draw_bird(gm->m, 1);
@@ -105,8 +108,9 @@ int move_bird_in_game(game *gm, int speed, int move_activated) {
       return 0;
     }
     move_walls(gm, speed);
+    count_score(gm);
     update_frames(gm->m);
-    print_map(*gm->m);
+    print_map(*gm->m, get_score_string(*gm));
   }
   return 1;
 }
@@ -124,6 +128,26 @@ unsigned char get_gap_legnth(game gm) {
 int colided(game *gm, point pos) {
   return !in_range(pos.x, pos.y, *gm->m) ||
          gm->m->frames[pos.y][pos.x] == WALL_FRAME;
+}
+
+void count_score(game *gm) {
+  for (unsigned int wall_id = 0; wall_id < gm->m->curr_num_walls; wall_id++) {
+    if (gm->m->b->pos.x ==
+        (gm->m->walls[wall_id]->top_left.x + gm->m->walls[wall_id]->width)) {
+      gm->score++;
+    }
+  }
+}
+
+char *get_score_string(game gm) {
+  char *score = malloc(sizeof(char) * 1024);
+  int max_len = 18;
+  sprintf(score, "    score : %d", gm.score);
+  int i = strlen(score);
+  while (i < max_len) {
+    score[i++] = EMPTY_FRAME;
+  }
+  return score;
 }
 
 game *free_game(game *gm) {

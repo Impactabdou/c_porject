@@ -31,6 +31,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+#run 
+r:
+	./bin/my_program
+
 # Clean build files
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)

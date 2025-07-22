@@ -14,6 +14,7 @@ typedef struct game_struct {
   map *m;
   unsigned char game_mode;
   unsigned int left_limitation;
+  unsigned int score;
 } game;
 
 game *create_game_manager(map *m, unsigned int left_limitation, int mode);
@@ -28,9 +29,13 @@ unsigned char get_gap_legnth(game gm);
 
 void add_wall_in_game(game *gm);
 
-void add_walls_in_game(game *gm, int num_walls);
+void add_walls_in_game(game *gm, unsigned int num_walls);
 
 int colided(game *gm, point pos);
 
 void respawn_walls_in_game(game *gm);
+
+char *get_score_string(game gm);
+
+void count_score(game *gm);
 #endif

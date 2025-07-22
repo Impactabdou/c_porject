@@ -10,7 +10,7 @@
 #define BOTTOM_R 3
 
 #define STAND_WIDTH 3
-#define WALL_OFFSET 10
+#define WALL_OFFSET 7
 
 #define EASY_MODE_GAP 15
 #define MED_MODE_GAP 13

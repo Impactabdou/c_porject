@@ -18,7 +18,7 @@ int main() {
 
   srand((unsigned)time(NULL));
 
-  unsigned int map_width = 150;
+  unsigned int map_width = 180;
   unsigned int map_height = 40;
   unsigned int max_num_walls = 5;
   unsigned int left_limitation = 20;
@@ -37,7 +37,7 @@ int main() {
 
   /*empty map*/
   update_frames(m);
-  print_map(*m);
+  print_map(*m, get_score_string(*gm));
   count++;
 
   pthread_t id_read, id_print;
@@ -60,7 +60,6 @@ void *asciRead() {
     }
     if ((ch = getchar()) == 32 && spaceON == 0) {
       spaceON = 1;
-      printf("Bird jump!\n");
     }
   }
 }
