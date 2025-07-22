@@ -46,6 +46,9 @@ int main() {
 
   pthread_join(id_print, NULL);
   pthread_join(id_read, NULL);
+
+  free_game(gm);
+
   return 0;
 }
 

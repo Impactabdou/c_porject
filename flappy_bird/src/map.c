@@ -62,6 +62,7 @@ void draw_walls(map *m, int reset) {
     unsigned int row_empty_start = curr_wall_cords[TOP_L].y;
     unsigned int row_empty_end = curr_wall_cords[BOTTOM_L].y;
     free(curr_wall_cords);
+    curr_wall_cords = NULL;
     for (unsigned int row = 0; row < m->height; row++) {
       if (row >= row_empty_start && row < row_empty_end) {
         continue;
@@ -115,6 +116,8 @@ void print_map(map m, char *score) {
         if (i < 3 && j > 161) {
           if (i == 1) {
             printf("%s", score);
+            free(score);
+            score = NULL;
             break;
           }
           printf("%c", EMPTY_FRAME);
@@ -128,4 +131,6 @@ void print_map(map m, char *score) {
     printf("#\n");
   }
   printf("%s\n", border_str);
+  free(border_str);
+  border_str = NULL;
 }

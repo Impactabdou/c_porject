@@ -140,8 +140,8 @@ void count_score(game *gm) {
 }
 
 char *get_score_string(game gm) {
-  char *score = malloc(sizeof(char) * 1024);
   int max_len = 18;
+  char *score = malloc(sizeof(char) * max_len);
   sprintf(score, "    score : %d", gm.score);
   int i = strlen(score);
   while (i < max_len) {
