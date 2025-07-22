@@ -10,9 +10,9 @@ game *create_game_manager(map *m, unsigned int left_limitation, int game_mode) {
   return gm;
 }
 
-wall *generate_wall(game *gm) {
+wall *generate_wall(game *gm, int ignore_limitation) {
 
-  if (gm->left_limitation >= gm->m->width) {
+  if (gm->left_limitation >= gm->m->width && !ignore_limitation) {
     return NULL;
   }
 
@@ -46,6 +46,8 @@ void respawn_walls_in_game(game *gm) {
     wall *curr_w = gm->m->walls[wall_id];
     if (out_of_bound_wall(*curr_w)) {
       draw_walls(gm->m, 1);
+      curr_w = free_wall(curr_w);
+      curr_w = generate_wall(gm, 1);
       reset_wall(curr_w, gm->m->width);
     }
   }
@@ -53,7 +55,7 @@ void respawn_walls_in_game(game *gm) {
 
 void add_wall_in_game(game *gm) {
 
-  wall *w = generate_wall(gm);
+  wall *w = generate_wall(gm, 0);
 
   if (w == NULL) {
     printf("Limitation has touched borders no space is available\n");

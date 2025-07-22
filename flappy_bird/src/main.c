@@ -20,8 +20,8 @@ int main() {
 
   unsigned int map_width = 150;
   unsigned int map_height = 40;
-  unsigned int max_num_walls = 4;
-  unsigned int left_limitation = 50;
+  unsigned int max_num_walls = 5;
+  unsigned int left_limitation = 20;
   unsigned int number_of_walls_at_start = 3;
   unsigned int count = 0;
 
@@ -80,7 +80,7 @@ void *print(game *gm) {
     }
   }
   gameEnd = 1;
-  printf("END\n");
+  printf("END : press ENTER to exit\n");
   exit(1);
 }
 
