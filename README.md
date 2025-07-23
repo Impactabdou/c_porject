@@ -1,3 +1,3 @@
-## Side persnal C projects 
+## Side personal C projects 
 
 ### Current project : Flappy bird 
