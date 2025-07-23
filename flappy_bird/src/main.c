@@ -13,6 +13,7 @@ void disableRAWMode();
 void enableRAWMode();
 void *asciRead();
 void *print(game *gm);
+void starting_page();
 
 int main() {
 
@@ -40,6 +41,8 @@ int main() {
   print_map(*m, get_score_string(*gm));
   count++;
 
+  starting_page();
+
   pthread_t id_read, id_print;
   pthread_create(&id_print, NULL, (void *(*)(void *))print, gm);
   pthread_create(&id_read, NULL, asciRead, NULL);
@@ -50,6 +53,54 @@ int main() {
   free_game(gm);
 
   return 0;
+}
+
+void starting_page() {
+  system("clear");
+  printf("                            .\n"
+         "                    _----. /.'.'\n"
+         ".-._________..      .' @ _\\  .'   \n"
+         "'.._______.   '.   /    (_| .')\n"
+         "  '._____.  /   '-/      | _.' \n"
+         "   '.______ (         ) ) \\\n"
+         "     '..____ '._       )  )\n"
+         "        .' __.--\\  , ,  // (( \n"
+         "        '.'     |  \\/   (_.'(  \n"
+         "                '   \\ .' \n"
+         "                 \\   (\n"
+         "                  \\   '.\n"
+         "                   \\ \\ '.)\n"
+         "                    '-'-'\n\n");
+  system("echo \""
+         "███████╗ █████╗ ██╗    ██╗███████╗ ██████╗██╗  ██╗   ██╗   "
+         "████████╗██╗██████╗ \n"
+         "╚══███╔╝██╔══██╗██║    ██║██╔════╝██╔════╝██║  ██║   ██║   "
+         "╚══██╔══╝██║██╔══██╗\n"
+         "  ███╔╝ ███████║██║ █╗ ██║█████╗  ██║     ███████║   ██║      ██║   "
+         "██║██████╔╝\n"
+         " ███╔╝  ██╔══██║██║███╗██║██╔══╝  ██║     ██╔══██║   ██║      ██║   "
+         "██║██╔══██╗\n"
+         "███████╗██║  ██║╚███╔███╔╝███████╗╚██████╗██║  ██║   ██║      ██║   "
+         "██║██║  ██║\n"
+         "╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝   ╚═╝      ╚═╝   "
+         "╚═╝╚═╝  ╚═╝\"");
+  printf(
+      "\nHello this game was developped by @IMPACTABDOU\n"
+      "Checkout my github for more fun games https://github.com/Impactabdou\n"
+      "\n======================================================================"
+      "\n"
+      "GAME RULES : \n\n"
+      "1 - You touch the borders and die\n"
+      "2 - You touch the walls and die\n"
+      "3 - Game is infinite and still under developement\n"
+      "SPACE IS YOUR FAV KEY\n"
+      "\n======================================================================"
+      "\n");
+  printf("======================PRESS SPACE+ENTER TO "
+         "LUNCH======================\n");
+  int ch;
+  while ((ch = getchar()) == 32)
+    ;
 }
 
 /// Reads keyboard input
