@@ -36,5 +36,6 @@ int get_html_data(char *path, char *data_str);
 void extract_chars_from(char *src, char *dest, char stop);
 void handle_request(char *request, char *response);
 void format_http_header(char *repsonse, int server);
+void lunch(server s);
 
 #endif // !H_SERV

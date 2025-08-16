@@ -1,8 +1,8 @@
 #include "../include/server.h"
+#include "./http/include/http_response.h"
 #include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -43,75 +43,30 @@ server create_server(int service, int port, int domain, int protocol,
   return s;
 }
 
-/*void extract_chars_from(char *src, char *dest, char stop) {
-  size_t i = 0;
-  while (src[i] != stop && i < strlen(src)) {
-    dest[i] = src[i];
-    i++;
+void lunch(server s) {
+  while (1) {
+    // int client_socket = accept(s.socket, NULL, NULL);
+    // if (client_socket == 0) {
+    //   perror("Failled to accept client's connection\n");
+    //   continue;
+    // }
+    // char request[MAX_LEN] = {0};
+    // http_request http_request;
+    // header h;
+    // http_data data;
+    // http_response http_response;
+    //
+    // //read(client_socket, request, sizeof(request));
+    // printf("%s\n", request);
+    // printf("=================================\n");
+    // create_request(&http_request, &h, &data, request);
+    // create_response(&http_response, &http_request);
+    // // generate_response(http_response);
+    // free_request(&http_request);
+    // free_response(&http_response);
+    // printf("=================================\n");
+    //
+    // close(client_socket);
   }
+  close(s.socket);
 }
-
-void handle_request(char *request, char *response) {
-  char path[1024] = {0};
-  char stop = 32;
-
-  if (strncmp(request, "GET", 3) == 0) {
-    request += 4;
-    extract_chars_from(request, path, stop);
-    int status = get_html_data(path, response);
-    format_http_header(response, status);
-    return;
-  }
-  printf("Request not handled for now\n");
-}
-
-void get_file(char *path) {
-  if (!path || path[0] != '/' || strlen(path) > PATH_MAX) {
-    path = NULL;
-    return;
-  }
-
-  char full_path[PATH_MAX * 2];
-
-  snprintf(full_path, sizeof(full_path), "./public%s", path);
-
-  strncpy(path, full_path, PATH_MAX);
-}
-
-int get_html_data(char *path, char *data_str) {
-
-  get_file(path);
-
-  if (path == NULL) {
-    printf("Wrong path\n");
-    return BAD_REQUEST;
-  }
-
-  FILE *html_data = fopen(path, "r");
-
-  if (html_data == NULL) {
-    perror("Error while loading file ");
-    data_str = NULL;
-    return NOT_FOUND;
-  }
-
-  char buffer[200];
-
-  while (fgets(buffer, 200, html_data) != NULL) {
-    strncat(data_str, buffer, 200);
-  }
-  return OK;
-}
-
-void format_http_header(char *response, int status) {
-
-  char *header;
-
-  if (status == OK) {
-    header = "HTTP/1.1 200\r\n";
-  } else {
-    header = "HTTP/1.1 400\r\n";
-  }
-
-  strncat(response, header, sizeof(response) - strlen(response) - 1);
-}*/

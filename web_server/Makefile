@@ -1,55 +1,53 @@
-# Compiler and flags
+# Tool# Tools
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude -ansi -std=c99
-LDFLAGS =
-DOXYGEN = doxygen
+RM = rm -f
+MKDIR = mkdir -p
 
 # Directories
-SRC_DIR = src
-OBJ_DIR = obj
-BIN_DIR = bin
-DOC_DIR = docs
-INC_DIR = include
+SRC_DIR = ./src
+OBJ_DIR = ./obj
+BIN_DIR = ./bin
+INC_DIR = ./include
+HTTP_DIR = $(SRC_DIR)/http
+HTTP_SRC_DIR = $(HTTP_DIR)/src
+HTTP_OBJ_DIR = $(OBJ_DIR)/http
 
-# Files
-SRC = $(wildcard $(SRC_DIR)/*.c)
-OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-BIN = $(BIN_DIR)/my_program
+# Compilation flags
+CPPFLAGS = -I$(INC_DIR) -I$(HTTP_DIR)/include
+CFLAGS = -Wall -Wextra -O2
+LDFLAGS = 
 
-# Default target
-all: $(BIN)
+# Targets
+PROG = $(BIN_DIR)/web_server
 
-# Link
-$(BIN): $(OBJ)
-	mkdir -p $(BIN_DIR)
-	$(CC) $(OBJ) -o $(BIN) $(LDFLAGS)
+# Source files
+MAIN_SRCS = $(wildcard $(SRC_DIR)/*.c)
+HTTP_SRCS = $(wildcard $(HTTP_SRC_DIR)/*.c)
 
-# Compile
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
+# Object files
+MAIN_OBJS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(MAIN_SRCS))
+HTTP_OBJS = $(patsubst $(HTTP_SRC_DIR)/%.c,$(HTTP_OBJ_DIR)/%.o,$(HTTP_SRCS))
+OBJS = $(MAIN_OBJS) $(HTTP_OBJS)
 
-# Clean build files
+.PHONY: all clean distclean
+
+all: $(HTTP_OBJ_DIR) $(BIN_DIR) $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+
+$(HTTP_OBJ_DIR)/%.o: $(HTTP_SRC_DIR)/%.c | $(HTTP_OBJ_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
+
+$(BIN_DIR) $(OBJ_DIR) $(HTTP_OBJ_DIR):
+	$(MKDIR) $@
+
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR)
+	-@$(RM) $(OBJ_DIR)/*.o
+	-@$(RM) $(HTTP_OBJ_DIR)/*.o
 
-# Doxygen documentation
-docs:
-	$(DOXYGEN) Doxyfile
-
-# Git push
-push:
-	git push
-
-# Git commit
-commit:
-	git add .
-	git commit -m "$(COM)" 
-
-# Run elf
-r:
-	./bin/my_program
-
-# Phony targets
-.PHONY: all clean docs
-
+distclean: clean
+	-@$(RM) $(PROG)
