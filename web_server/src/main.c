@@ -1,5 +1,6 @@
 #include "../include/server.h"
 #include "./http/include/http_response.h"
+#include "http/include/http_request.h"
 #include <netinet/in.h>
 #include <stdio.h>
 #include <string.h>
@@ -32,22 +33,26 @@ void lunch(server s) {
       perror("Failled to accept client's connection\n");
       continue;
     }
-    header h;
-    http_data data;
-    http_request http_request;
-    http_response http_response;
-    char response_str[MAX_LEN] = {0};
-    char request[MAX_LEN] = {0};
-    read(client_socket, request, sizeof(request));
-    printf("%s\n", request);
+    char buffer[MAX_LEN] = {0};
+    size_t len = read(client_socket, buffer, sizeof(buffer));
+    if (len == 0) {
+      perror("len is null ");
+      break;
+    }
+    http_request *request = NULL;
+    http_response *response = NULL;
+    printf("%s\n", buffer);
     printf("=================================\n");
-    create_request(&http_request, &h, &data, request);
-    print_header(h);
-    create_response(&http_response, &http_request);
-    generate_response(&http_response, response_str);
-    printf("%s\n", response_str);
-    send(client_socket, response_str, strlen(response_str), 0);
+    request = create_request(request, buffer);
+    print_request_header(*request->h);
+    response = create_response(response, request);
+    generate_response(response);
+    printf("%s\n", response->response_str);
+    send(client_socket, response->response_str, strlen(response->response_str),
+         0);
     printf("=================================\n");
+    free_request(request);
+    free_response(response);
     close(client_socket);
   }
   close(s.socket);

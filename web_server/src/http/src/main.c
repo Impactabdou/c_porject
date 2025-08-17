@@ -3,7 +3,7 @@
 //
 // int main() {
 //
-//   const char request[MAX_LEN] =
+//   char buffer[MAX_LEN] =
 //       "GET / HTTP/1.1\r\n"
 //       "User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:141.0) \r\n"
 //       "Gecko/20100101 Firefox/141.0\r\n"
@@ -18,19 +18,18 @@
 //       "Sec-Fetch-Mode: navigate\r\n"
 //       "Sec-Fetch-Site: none\r\n\r\n";
 //
-//   header h;
-//   http_data data;
-//   http_request http_request;
-//   http_response http_response;
-//   char response_str[MAX_LEN] = {0};
-//
+//   http_request *request = NULL;
+//   http_response *response = NULL;
+//   printf("%s\n", buffer);
 //   printf("=================================\n");
-//   create_request(&http_request, &h, &data, request);
-//   print_header(h);
-//   create_response(&http_response, &http_request);
-//   generate_response(&http_response, response_str);
-//   printf("%s\n", response_str);
+//   request = create_request(request, buffer);
+//   print_request_header(*request->h);
+//   response = create_response(response, request);
+//   generate_response(response);
+//   printf("%s\n", response->response_str);
 //   printf("=================================\n");
+//   free_request(request);
+//   free_response(response);
 //
 //   return 0;
 // }

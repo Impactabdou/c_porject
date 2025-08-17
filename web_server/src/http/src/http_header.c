@@ -3,9 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* BTW there is a header for the response and the request and not only the
- * request */
-void create_header(header *h, const char request[MAX_LEN]) {
+http_request_header *create_request_header(http_request_header *h,
+                                           const char request[MAX_LEN]) {
 
   char request_header[MAX_LEN] = {0};
   bool break_found = false;
@@ -23,8 +22,10 @@ void create_header(header *h, const char request[MAX_LEN]) {
 
   if (!break_found) {
     fprintf(stderr, "No break has been found in the request\n");
-    return;
+    return NULL;
   }
+
+  h = calloc(1, sizeof(http_request_header));
 
   set_methode(h, request);
 
@@ -34,10 +35,12 @@ void create_header(header *h, const char request[MAX_LEN]) {
 
   sanitise_input(request_header, sanitised_header);
 
-  set_header(h, sanitised_header);
+  set_request_header(h, sanitised_header);
+
+  return h;
 }
 
-void set_header(header *h, char request_header[MAX_LEN]) {
+void set_request_header(http_request_header *h, char request_header[MAX_LEN]) {
   char keys[HEADER_DEFAULT_NUMBER_PARAMS][MAX_LEN_PARAM] = {
       ACCEPT, ACCEPT_ENCODING, ACCEPT_LANG, HOST, CONNECTION, USER_AGENT};
   char values[HEADER_DEFAULT_NUMBER_PARAMS][MAX_LEN_PARAM] = {0};
@@ -45,7 +48,7 @@ void set_header(header *h, char request_header[MAX_LEN]) {
   bool not_found = false;
 
   for (size_t i = 0; i < HEADER_DEFAULT_NUMBER_PARAMS; i++) {
-    if (parse_header_params(request_header, keys[i], values[i]) != 0) {
+    if (parse_request_header_params(request_header, keys[i], values[i]) != 0) {
       not_found = true;
     }
   }
@@ -73,7 +76,8 @@ void set_header(header *h, char request_header[MAX_LEN]) {
   h->user_agent[sizeof(h->user_agent) - 1] = '\0';
 }
 
-void set_methode(header *h, const char request_header[MAX_LEN_PARAM]) {
+void set_methode(http_request_header *h,
+                 const char request_header[MAX_LEN_PARAM]) {
   char methode[MAX_LEN_PARAM] = {0};
   char path[MAX_LEN_PARAM] = {0};
   char http_flag[MAX_LEN_PARAM] = {0};
@@ -123,9 +127,9 @@ void set_methode(header *h, const char request_header[MAX_LEN_PARAM]) {
 /*
  * @brief takes an http header key and sets it's value
  */
-int parse_header_params(const char header[MAX_LEN_PARAM],
-                        const char key[MAX_LEN_PARAM],
-                        char value[MAX_LEN_PARAM]) {
+int parse_request_header_params(const char header[MAX_LEN_PARAM],
+                                const char key[MAX_LEN_PARAM],
+                                char value[MAX_LEN_PARAM]) {
 
   if (header == NULL || key == NULL) {
     fprintf(stderr, "Key or String are NULL\n");
@@ -177,7 +181,7 @@ int parse_header_params(const char header[MAX_LEN_PARAM],
   return 0;
 }
 
-void print_header(header h) {
+void print_request_header(http_request_header h) {
   printf("%s %s %s%s\n", h.methode, h.path, h.http_flag, h.http_version);
   printf("Accept: %s\n"
          "Accept-Language: %s\n"
@@ -189,4 +193,72 @@ void print_header(header h) {
          h.connection);
 }
 
-void free_header(header *h) { free(h); }
+void free_request_header(http_request_header *header) {
+  free(header);
+  header = NULL;
+}
+
+http_response_header *
+create_response_header(http_response_header *response_header,
+                       http_request_header request_header) {
+  response_header = calloc(1, sizeof(http_response_header));
+  snprintf(response_header->http_version, sizeof(response_header->http_version),
+           "%s", request_header.http_version);
+
+  snprintf(response_header->response_status,
+           sizeof(response_header->response_status), "200 OK");
+
+  generate_date(response_header->date);
+
+  response_header->header_str[0] = '\0';
+
+  return response_header;
+}
+
+void generate_date(char buffer[MAX_LEN_PARAM]) {
+  FILE *fd = NULL;
+  fd = popen("date", "r");
+  if (fd == NULL) {
+    perror("Date command could not be exec ");
+    return;
+  }
+  if (fgets(buffer, MAX_LEN_PARAM - 1, fd) == NULL) {
+    perror("Failed to read DATE output ");
+  }
+  buffer[MAX_LEN_PARAM - 1] = '\0';
+  pclose(fd);
+}
+
+void set_header_response(http_response_header *response_header,
+                         size_t response_code) {
+
+  switch (response_code) {
+  case CODE_OK:
+    snprintf(response_header->response_status, 7, "200 OK");
+    ;
+    break;
+  case NOT_FOUND:
+    snprintf(response_header->response_status, 4, "404");
+    break;
+  // Add other status codes as needed
+  default:
+    return;
+  }
+  // here to add other headers to set dont forget to add them in the
+  // http_response_header structur too
+}
+
+void to_string_response_header(http_response_header *response_header) {
+
+  snprintf(response_header->header_str, MAX_LEN - 1,
+           "HTTP/%s %s\r\nContent-Type: %s\r\nDate: %s\r\n\r\n",
+           response_header->http_version, response_header->response_status,
+           response_header->content_type, response_header->date);
+
+  response_header->header_str[MAX_LEN - 1] = '\0';
+}
+
+void free_http_response_header(http_response_header *header) {
+  free(header);
+  header = NULL;
+}

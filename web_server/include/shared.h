@@ -3,8 +3,14 @@
 
 /* size macros */
 #define MAX_LEN 8000
+#define DATA_LEN 10000
+#define RESPONSE_LEN DATA_LEN + MAX_LEN
 #define MAX_LEN_PARAM 200
 #define MAX_LINE 1024
+
+/* HTTP methodes */
+#define GET "GET"
+#define POST "POST"
 
 void sanitise_input(const char *input, char *output);
 

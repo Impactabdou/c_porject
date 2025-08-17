@@ -15,7 +15,15 @@
   6 /* this will change thorught when ever more feilds are added to the header \
      */
 
-typedef struct header {
+/* HTTP response status*/
+#define CODE_OK 200
+#define BAD_REQUEST 400
+#define UNAUTHORIZED 401
+#define FORBIDDEN 403
+#define NOT_FOUND 404
+#define INTERNAL_SERVER_EROOR 500
+
+typedef struct http_request_header {
   char methode[MAX_LEN_PARAM];
   char http_version[MAX_LEN_PARAM];
   char path[MAX_LEN_PARAM];
@@ -27,20 +35,44 @@ typedef struct header {
   char host[MAX_LEN_PARAM];
   char connection[MAX_LEN_PARAM];
   size_t number_params;
-} header;
+} http_request_header;
 
-void create_header(header *h, const char request[MAX_LEN]);
+typedef struct http_response_header {
+  char http_version[MAX_LEN_PARAM];
+  char response_status[MAX_LEN_PARAM];
+  char date[MAX_LEN_PARAM];
+  char content_type[MAX_LEN_PARAM];
+  char header_str[MAX_LEN];
+} http_response_header;
 
-void set_header(header *h, char request_header[MAX_LEN]);
+http_request_header *create_request_header(http_request_header *h,
+                                           const char request[MAX_LEN]);
 
-int parse_header_params(const char header[MAX_LEN_PARAM],
-                        const char key[MAX_LEN_PARAM],
-                        char value[MAX_LEN_PARAM]);
+void set_request_header(http_request_header *h, char request_header[MAX_LEN]);
 
-void set_methode(header *h, const char request_header[MAX_LEN_PARAM]);
+int parse_request_header_params(const char header[MAX_LEN_PARAM],
+                                const char key[MAX_LEN_PARAM],
+                                char value[MAX_LEN_PARAM]);
 
-void print_header(header h);
+void set_methode(http_request_header *h,
+                 const char request_header[MAX_LEN_PARAM]);
 
-void free_header(header *h);
+void print_request_header(http_request_header header);
+
+void free_request_header(http_request_header *header);
+
+/* HTTP response header */
+http_response_header *
+create_response_header(http_response_header *response_header,
+                       http_request_header request_header);
+
+void generate_date(char buffer[MAX_LEN_PARAM]);
+
+void set_header_response(http_response_header *response_header,
+                         size_t response_code);
+
+void to_string_response_header(http_response_header *response_header);
+
+void free_http_response_header(http_response_header *header);
 
 #endif // !H_HEADER
