@@ -36,21 +36,27 @@ void lunch(server s) {
     char buffer[MAX_LEN] = {0};
     size_t len = read(client_socket, buffer, sizeof(buffer));
     if (len == 0) {
-      perror("len is null ");
-      break;
+      perror("len is null client droped ");
+      continue;
     }
     http_request *request = NULL;
     http_response *response = NULL;
+
     printf("%s\n", buffer);
     printf("=================================\n");
-    request = create_request(request, buffer);
-    print_request_header(*request->h);
-    response = create_response(response, request);
-    generate_response(response);
+
+    if ((request = create_request(request, buffer)) == NULL) {
+      response = create_response_for_bad_request(PATH_BAD_REQUEST);
+      generate_generic_response(response, BAD_REQUEST);
+    } else {
+      response = create_response(response, request);
+      generate_response(response);
+    }
     printf("%s\n", response->response_str);
+    printf("=================================\n");
+
     send(client_socket, response->response_str, strlen(response->response_str),
          0);
-    printf("=================================\n");
     free_request(request);
     free_response(response);
     close(client_socket);

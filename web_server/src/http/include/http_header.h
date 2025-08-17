@@ -12,7 +12,7 @@
 #define CONNECTION "Connection\0"
 #define USER_AGENT "User-Agent\0"
 #define HEADER_DEFAULT_NUMBER_PARAMS                                           \
-  6 /* this will change thorught when ever more feilds are added to the header \
+  5 /* this will change thorught when ever more feilds are added to the header \
      */
 
 /* HTTP response status*/
@@ -69,9 +69,12 @@ create_response_header(http_response_header *response_header,
 void generate_date(char buffer[MAX_LEN_PARAM]);
 
 void set_header_response(http_response_header *response_header,
-                         size_t response_code);
+                         const char *methode);
 
 void to_string_response_header(http_response_header *response_header);
+
+void sanitise_header_fields(const char sanitised_header[MAX_LEN],
+                            char sanitised_header_fields[MAX_LEN]);
 
 void free_http_response_header(http_response_header *header);
 

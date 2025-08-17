@@ -17,37 +17,46 @@ void generate_response(http_response *response) {
   if (strncmp(response->request->h->methode, GET, 3) == 0) {
 
     size_t response_code = get_methode(response);
-    set_header_response(response->header, response_code);
-    to_string_response_header(response->header);
 
-    snprintf(response->response_str, RESPONSE_LEN - 1, "%s%s",
-             response->header->header_str, response->data->data);
-    response->response_str[RESPONSE_LEN - 1] = '\0';
+    if (response_code == CODE_OK) {
+      set_header_response(response->header, GET);
+      to_string_response_header(response->header);
+      snprintf(response->response_str, RESPONSE_LEN - 1, "%s%s",
+               response->header->header_str, response->data->data);
+      response->response_str[RESPONSE_LEN - 1] = '\0';
+    } else {
+      set_response_error_data(response, response_code);
+      generate_generic_response(response, response_code);
+    }
 
     return;
   }
 }
 
-size_t read_file(FILE *fd, char content[DATA_LEN]) {
-  char buffer[MAX_LINE] = {0};
-  size_t content_size = 0;
-
-  while (fgets(buffer, sizeof(buffer), fd) != NULL) {
-    size_t remaining_space = DATA_LEN - content_size - 1;
-
-    if (remaining_space <= 0) {
-      break;
-    }
-
-    strncat(content, buffer, remaining_space);
-    content_size += strlen(buffer);
-
-    if (content_size >= DATA_LEN - 1) {
-      break;
-    }
+void set_response_error_data(http_response *response, size_t error_code) {
+  if (response->data != NULL)
+    free_data(response->data);
+  switch (error_code) {
+  case NOT_FOUND:
+    response->data = create_data_from_file(PATH_NOT_FOUND);
+    break;
+  default:
+    printf("In set_response_error_data/http_response.c error case is not "
+           "handled FAILED TO RESPOND\n");
+    exit(1);
   }
-  content[content_size] = '\0';
-  return content_size;
+}
+
+void generate_generic_response(http_response *response, size_t error_code) {
+  char date[MAX_LEN_PARAM] = {0};
+  char header_str[MAX_LEN] = {0};
+  generate_date(date);
+  snprintf(header_str, MAX_LEN - 1,
+           "HTTP/1.1 %zu\r\nContent-Type: text/html\r\nDate: %s\r\n\r\n",
+           error_code, date);
+  snprintf(response->response_str, RESPONSE_LEN - 1, "%s%s", header_str,
+           response->data->data);
+  response->response_str[RESPONSE_LEN - 1] = '\0';
 }
 
 void prepare_path(const http_response *response,
@@ -55,7 +64,8 @@ void prepare_path(const http_response *response,
 
   strncat(full_path, PUBLIC_DIR, MAX_LEN_PARAM - 1);
 
-  if (strncmp(response->request->h->path, "/", 1) == 0) {
+  if (strncmp(response->request->h->path, "/",
+              strlen(response->request->h->path)) == 0) {
     strncat(full_path, INDEX_HTML, MAX_LEN_PARAM - 1);
   } else {
     strncat(full_path, response->request->h->path, MAX_LEN_PARAM - 1);
@@ -87,12 +97,28 @@ size_t get_methode(const http_response *response) {
   return CODE_OK;
 }
 
+http_response *create_response_for_bad_request(const char *path) {
+  http_response *res = calloc(1, sizeof(http_response));
+  res->header = NULL;
+  res->data = create_data_from_file(path);
+  return res;
+}
+
 void free_response(http_response *response) {
-  free_http_response_header(response->header);
-  free_data(response->data);
-  response->header = NULL;
-  response->data = NULL;
-  response->request = NULL;
-  free(response);
-  response = NULL;
+  if (response != NULL) {
+    if (response->header != NULL) {
+      free_http_response_header(response->header);
+      response->header = NULL;
+    }
+    if (response->data != NULL) {
+      free_data(response->data);
+      response->data = NULL;
+    }
+    if (response->request != NULL) {
+      response->request = NULL;
+    }
+
+    free(response);
+    response = NULL;
+  }
 }

@@ -7,6 +7,7 @@ http_request_header *create_request_header(http_request_header *h,
                                            const char request[MAX_LEN]) {
 
   char request_header[MAX_LEN] = {0};
+  request_header[0] = '\0';
   bool break_found = false;
   size_t r_h_size = 0;
 
@@ -32,17 +33,38 @@ http_request_header *create_request_header(http_request_header *h,
   h->number_params = HEADER_DEFAULT_NUMBER_PARAMS;
 
   char sanitised_header[MAX_LEN];
-
+  char sanitised_header_fields[MAX_LEN];
   sanitise_input(request_header, sanitised_header);
 
-  set_request_header(h, sanitised_header);
+  sanitise_header_fields(sanitised_header, sanitised_header_fields);
+
+  set_request_header(h, sanitised_header_fields);
 
   return h;
 }
 
+void sanitise_header_fields(const char sanitised_header[MAX_LEN],
+                            char sanitised_header_fields[MAX_LEN]) {
+  bool copying = false;
+  size_t i = 0;
+  size_t j = 0;
+  while (i < strlen(sanitised_header)) {
+    if (!copying) {
+      if (sanitised_header[i] == '\r' && sanitised_header[i + 1] == '\n' &&
+          sanitised_header[i + 2] != '\r' && sanitised_header[i + 3] != '\n') {
+        copying = true;
+      } else {
+        i++;
+        continue;
+      }
+    }
+    sanitised_header_fields[j++] = sanitised_header[i++];
+  }
+}
+
 void set_request_header(http_request_header *h, char request_header[MAX_LEN]) {
   char keys[HEADER_DEFAULT_NUMBER_PARAMS][MAX_LEN_PARAM] = {
-      ACCEPT, ACCEPT_ENCODING, ACCEPT_LANG, HOST, CONNECTION, USER_AGENT};
+      ACCEPT, ACCEPT_ENCODING, ACCEPT_LANG, HOST, USER_AGENT};
   char values[HEADER_DEFAULT_NUMBER_PARAMS][MAX_LEN_PARAM] = {0};
 
   bool not_found = false;
@@ -69,10 +91,7 @@ void set_request_header(http_request_header *h, char request_header[MAX_LEN]) {
   strncpy(h->host, values[3], sizeof(h->host) - 1);
   h->host[sizeof(h->host) - 1] = '\0';
 
-  strncpy(h->connection, values[4], sizeof(h->connection) - 1);
-  h->connection[sizeof(h->connection) - 1] = '\0';
-
-  strncpy(h->user_agent, values[5], sizeof(h->user_agent) - 1);
+  strncpy(h->user_agent, values[4], sizeof(h->user_agent) - 1);
   h->user_agent[sizeof(h->user_agent) - 1] = '\0';
 }
 
@@ -131,7 +150,7 @@ int parse_request_header_params(const char header[MAX_LEN_PARAM],
                                 const char key[MAX_LEN_PARAM],
                                 char value[MAX_LEN_PARAM]) {
 
-  if (header == NULL || key == NULL) {
+  if (header == NULL || strlen(header) == 0 || key == NULL) {
     fprintf(stderr, "Key or String are NULL\n");
     return 1;
   }
@@ -150,7 +169,6 @@ int parse_request_header_params(const char header[MAX_LEN_PARAM],
       temp[temp_index++] = header[string_index++];
     }
     temp[temp_index] = '\0';
-
     if (strncmp(key, temp, key_size) == 0) {
       key_found = true;
       break;
@@ -165,11 +183,11 @@ int parse_request_header_params(const char header[MAX_LEN_PARAM],
     fprintf(stderr, "Key has not been found in string\n");
     return 2;
   }
+
   size_t value_index = strlen(value);
 
   /* shiffting to remove ':' */
   ++string_index;
-
   for (size_t i = string_index; i < string_size; i++) {
     if (header[i] == '\r' && header[i + 1] == '\n') {
       break;
@@ -230,22 +248,15 @@ void generate_date(char buffer[MAX_LEN_PARAM]) {
 }
 
 void set_header_response(http_response_header *response_header,
-                         size_t response_code) {
-
-  switch (response_code) {
-  case CODE_OK:
+                         const char *methode) {
+  if (strncmp(methode, POST, 5) == 0) {
+    snprintf(response_header->response_status, 4, "200");
+  } else if (strncmp(methode, GET, 4) == 0) {
     snprintf(response_header->response_status, 7, "200 OK");
-    ;
-    break;
-  case NOT_FOUND:
-    snprintf(response_header->response_status, 4, "404");
-    break;
-  // Add other status codes as needed
-  default:
-    return;
+  } else {
+    printf("BAD METHODE : this shouldn't happen because the request had been "
+           "validated... set_header_response/http_header.c\n");
   }
-  // here to add other headers to set dont forget to add them in the
-  // http_response_header structur too
 }
 
 void to_string_response_header(http_response_header *response_header) {

@@ -12,6 +12,10 @@
 #define GET "GET"
 #define POST "POST"
 
+/* Generic paths */
+#define PATH_BAD_REQUEST "./public/400.html"
+#define PATH_NOT_FOUND "./public/404.html"
+
 void sanitise_input(const char *input, char *output);
 
 #endif // !H_SHARED
