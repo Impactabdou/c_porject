@@ -37,6 +37,19 @@ clean:
 docs:
 	$(DOXYGEN) Doxyfile
 
+# Git push
+push:
+	git push
+
+# Git commit
+commit:
+	git add .
+	git commit -m "$(COM)" 
+
+# Run elf
+r:
+	./bin/my_program
+
 # Phony targets
 .PHONY: all clean docs
 

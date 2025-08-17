@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude -ansi
+CFLAGS = -Wall -Wextra -Iinclude -ansi -std=c99 -lnsl -lm
 LDFLAGS =
 DOXYGEN = doxygen
 
