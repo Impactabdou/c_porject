@@ -1,6 +1,5 @@
 
 # Fun C Projects
-![Visitors](https://visitor-badge.glitch.me/badge?page_id=Impactabdou.c_project)
 
 During the summer of **2025**, I had a lot of free time—so I decided to spend it in the best way possible: **building fun projects in C**.  
 This repo is a collection of those projects, where I explored game development, networking, and low-level system programming.  
