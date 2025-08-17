@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* BTW there is a header for the response and the request and not only the
+ * request */
 void create_header(header *h, const char request[MAX_LEN]) {
 
   char request_header[MAX_LEN] = {0};
